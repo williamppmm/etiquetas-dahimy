@@ -48,8 +48,8 @@ Ayuda a reducir la caída
 Hidratación
 Limpieza profunda
 Nutrición`,
-    wmm: 100,
-    hmm: 70,
+    wmm: 90,
+    hmm: 110,
   };
 
   function parseListByLines(text) {
@@ -85,27 +85,37 @@ Nutrición`,
   }
 
   function updateLabel(data) {
-    el.pName.textContent = data.name?.trim() || "Producto";
+    const name = data.name?.trim() || "";
+    el.pName.textContent = name;
 
     const ing = (data.ingredients || "").trim();
-    el.pIngredients.innerHTML = ing
-      ? `<strong>Principales ingredientes:</strong> ${escapeHtml(ing)}`
-      : `<strong>Principales ingredientes:</strong> —`;
+    if (ing) {
+      el.pIngredients.innerHTML = `<strong>Principales ingredientes:</strong> ${escapeHtml(ing)}`;
+    } else {
+      el.pIngredients.innerHTML = "";
+    }
+    el.pIngredients.classList.toggle("hide", !ing);
 
     const content = (data.content || "").trim();
-    el.pContent.textContent = content ? `Contenido: ${content}` : `Contenido: —`;
+    el.pContent.textContent = content ? `Contenido: ${content}` : "";
+    el.pContent.classList.toggle("hide", !content);
 
     const wa = (data.whatsapp || "").trim();
-    el.pWhatsapp.innerHTML = wa
-      ? `<strong>WhatsApp:</strong> ${escapeHtml(wa)}`
-      : `<strong>WhatsApp:</strong> —`;
+    if (wa) {
+      el.pWhatsapp.innerHTML = `<strong>WhatsApp:</strong> ${escapeHtml(wa)}`;
+    } else {
+      el.pWhatsapp.innerHTML = "";
+    }
+    el.pWhatsapp.classList.toggle("hide", !wa);
 
     el.pNoSalt.classList.toggle("hide", !data.noSalt);
 
-    buildBenefits(parseListByLines(data.benefits));
+    const benefits = parseListByLines(data.benefits);
+    buildBenefits(benefits);
+    el.pBenefits.classList.toggle("hide", !benefits.length);
 
-    const w = Number(data.wmm) || 100;
-    const h = Number(data.hmm) || 70;
+    const w = Number(data.wmm) || 90;
+    const h = Number(data.hmm) || 110;
     setLabelSizeMm(w, h);
   }
 
@@ -117,8 +127,8 @@ Nutrición`,
       whatsapp: el.whatsapp?.value?.trim() ?? "",
       noSalt: !!el.noSalt?.checked,
       benefits: el.benefits?.value ?? "",
-      wmm: el.wmm?.value ?? 100,
-      hmm: el.hmm?.value ?? 70,
+      wmm: el.wmm?.value ?? 90,
+      hmm: el.hmm?.value ?? 110,
     };
   }
 
@@ -131,8 +141,8 @@ Nutrición`,
     el.whatsapp.value = data.whatsapp || "";
     el.noSalt.checked = !!data.noSalt;
     el.benefits.value = data.benefits || "";
-    el.wmm.value = data.wmm ?? 100;
-    el.hmm.value = data.hmm ?? 70;
+    el.wmm.value = data.wmm ?? 90;
+    el.hmm.value = data.hmm ?? 110;
   }
 
   function saveToStorage(data) {
@@ -186,8 +196,8 @@ Nutrición`,
     }
 
     const data = readForm();
-    const wmm = Number(data.wmm) || 100;
-    const hmm = Number(data.hmm) || 70;
+    const wmm = Number(data.wmm) || 90;
+    const hmm = Number(data.hmm) || 110;
 
     const canvas = await window.html2canvas(el.label, {
       scale: 3,
@@ -211,17 +221,12 @@ Nutrición`,
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch {}
-
     form.reset();
-
-    // Valores por defecto de tamaño (para que no quede vacío)
-    el.wmm.value = 100;
-    el.hmm.value = 70;
-
-    // Luego de limpiar, volvemos al ejemplo (si prefieres que quede en blanco, te lo cambio)
-    fillForm(SAMPLE);
-    updateLabel(SAMPLE);
-    saveToStorage(SAMPLE);
+    // Valores por defecto de tama??o (para que no quede vac??o)
+    el.wmm.value = 90;
+    el.hmm.value = 110;
+    const empty = readForm();
+    updateLabel(empty);
   }
 
   function init() {
@@ -271,3 +276,4 @@ Nutrición`,
 
   init();
 })();
+

@@ -6,8 +6,8 @@
   --muted: #a7adbd;
 
   /* Tamaño de etiqueta por defecto */
-  --label-w: 100mm;
-  --label-h: 70mm;
+  --label-w: 90mm;
+  --label-h: 110mm;
 }
 
 *{ box-sizing: border-box; }
